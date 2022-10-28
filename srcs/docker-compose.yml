@@ -1,0 +1,60 @@
+# docker-compose.yml is the file that will allow us to set-up and run our containers with our own configuration
+version: '3.7'
+services:
+  mariadb:
+    container_name: mariadb
+    build: ./requirements/mariadb
+    ports:
+      - 3306:3306
+    networks:
+      - best_network
+    volumes:
+      - ./data/mariadb:/var/lib/mysql
+    restart: always
+    env_file:
+      - .env
+
+  nginx:
+    container_name: nginx
+    build: ./requirements/nginx
+    depends_on:
+      - wordpress
+    ports:
+      - 443:443
+    networks:
+      - best_network
+    volumes:
+      - ./data/wordpress:/var/www/html
+    restart: always
+    env_file:
+      - .env
+
+  wordpress:
+    container_name: wordpress
+    build: ./requirements/wordpress
+    depends_on:
+      - mariadb
+    ports:
+      - 80:80
+    networks:
+      - best_network
+    volumes:
+      - ./data/wordpress:/var/www/html
+    restart: always
+    env_file:
+      - .env
+
+networks:
+  best_network:
+
+volume:
+  mariadb_data:
+    driver_opts:
+      type: none
+      device: /home/wbekkal/data/mysql
+      o: bind
+  wordpress_data:
+    driver_opts:
+      type: none
+      device: /home/wbekkal/data/html/wordpress
+      o: bind
