@@ -1,10 +1,10 @@
 FROM alpine:3.15
 
 # install mariadb
-RUN apk update && apk upgrade && apk add --no-cache mariadb mariadb-client
+RUN apk update && apk upgrade && apk add --no-cache mariadb mariadb-client bash
 
 # copy the script to create the database
-COPY ./srcs/requirements/mariadb/tools/database-launch.sh /database-launch.sh
+COPY ./tools/database-launch.sh ./database-launch.sh
 
 # run database launch script
-ENTRYPOINT ["./database-launch.sh"]
+ENTRYPOINT ["bash", "database-launch.sh"]

@@ -9,7 +9,7 @@ services:
     networks:
       - best_network
     volumes:
-      - ./data/mariadb:/var/lib/mysql
+      - mariadb-data:/var/lib/mysql
     restart: always
     env_file:
       - .env
@@ -24,7 +24,7 @@ services:
     networks:
       - best_network
     volumes:
-      - ./data/wordpress:/var/www/html
+      - wordpress-data:/var/www/html/wordpress
     restart: always
     env_file:
       - .env
@@ -35,11 +35,11 @@ services:
     depends_on:
       - mariadb
     ports:
-      - 80:80
+      - 9000:9000
     networks:
       - best_network
     volumes:
-      - ./data/wordpress:/var/www/html
+      - wordpress-data:/var/www/html/wordpress
     restart: always
     env_file:
       - .env
@@ -47,13 +47,13 @@ services:
 networks:
   best_network:
 
-volume:
-  mariadb_data:
+volumes:
+  mariadb-data:
     driver_opts:
       type: none
       device: /home/wbekkal/data/mysql
       o: bind
-  wordpress_data:
+  wordpress-data:
     driver_opts:
       type: none
       device: /home/wbekkal/data/html/wordpress
