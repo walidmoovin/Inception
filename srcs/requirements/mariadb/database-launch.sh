@@ -1,15 +1,22 @@
+#!/bin/sh
+
+if [ ! -d "/run/mysqld" ]; then
+	mkdir -p /run/mysqld
+	chown -R mysql:mysql /run/mysqld
+fi
 # check if the database is already running
 if [ ! -d "/var/lib/mysql/mysql" ]; then
 	chown -R mysql:mysql /var/lib/mysql
 
 	# initialize database, and creates a directory for mariadb data
-	mysql_install_db --basedir=/usr --datadir=/var/lib/mysql --user=mysql --rpm
+	mysql_install_db --basedir=/usr --datadir=/var/lib/mysql --user=mysql --rpm > /dev/null
 
 	tfile=`mktemp`
 	if [ ! -f "$tfile" ]; then
 		return 1
 	fi
-	cat << EOF > $tfile
+
+	mysqld --user=mysql --bootstrap << EOF
 USE mysql;
 FLUSH PRIVILEGES;
 DELETE FROM	mysql.user WHERE User='';
@@ -17,11 +24,13 @@ DROP DATABASE test;
 DELETE FROM mysql.db WHERE Db='test';
 DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
 ALTER USER 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD';
-CREATE DATABASE $WORDPRESS_DB_NAME CHARACTER SET utf8 COLLATE utf8_general_ci;
+CREATE DATABASE $WORDPRESS_DB_NAME CHARACTER SET 'utf8' COLLATE 'utf8_general_ci';
 CREATE USER '$WORDPRESS_DB_USER'@'%' IDENTIFIED by '$WORDPRESS_DB_PASSWORD';
 GRANT ALL PRIVILEGES ON $WORDPRESS_DB_NAME.* TO '$WORDPRESS_DB_USER'@'%';
 FLUSH PRIVILEGES;
 EOF
-	/usr/bin/mysqld --user=mysql --bootstrap --verbose=0 < $tfile
-	rm -f $tfile
 fi
+sed -i "s|skip-networking|# skip-networking|g" /etc/my.cnf.d/mariadb-server.cnf
+sed -i "s|.*bind-address\s*=.*|bind-address=0.0.0.0|g" /etc/my.cnf.d/mariadb-server.cnf
+
+mysqld --user=mysql --console
