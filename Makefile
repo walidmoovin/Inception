@@ -1,30 +1,24 @@
-up:
+all: fclean domain up
+domain:
+	@echo "Creating domain..."
+	@echo "127.0.0.1 wbekkal.42.fr" >> /etc/hosts
+up: start
 	@docker-compose -f ./srcs/docker-compose.yml up --build
 start:
-		@if [ ! -d "/home/wbekkal/data/mysql" ]; then
-			echo "Creating mysql data directory";
-			mkdir -p /home/wbekkal/data/mysql;
-		fi
-		@if [ ! -d "/home/wbekkal/data/html" ]; then
-			echo "Creating html data directory";
-			mkdir -p /home/wbekkal/data/html;
-		fi
-
-		@sudo chown -R mysql:mysql /home/wbekkal/data/mysql; 
-		@sudo chown -R wbekkal:wbekkal /home/wbekkal/data/html; 
+	@echo "Creating data files...";
+	@mkdir -p /home/wbekkal/data/mysql;
+	@mkdir -p /home/wbekkal/data/html/wordpress;
+	@sudo chown -R wbekkal:wbekkal /home/wbekkal/data/mysql; 
+	@sudo chown -R wbekkal:wbekkal /home/wbekkal/data/html/wordpress; 
 down:
 	@echo "Stopping containers...";
 	@docker-compose -f ./srcs/docker-compose.yml down
-clean:
-	@echo "Removing all containers...";
-	@docker stop $$(docker ps -qa) || true; 
-	docker rm $$(docker ps -qa) || true; \
-	docker rmi -f $$(docker images -qa) || true; \
-	docker volume rm $$(docker volume ls -q) || true; \
-	docker network rm $$(docker network ls -q) || true; 
+clean: down
+	@echo "Removing all containers, volumes and networks...";
+	@docker system prune -f
+	@docker system prune -af --volumes
 delete:
 	@echo "Deleting data directories...";
-	@rm -rf /home/wbekkal/data/mysql
-	@rm -rf /home/wbekkal/data/html
+	@rm -rf /home/wbekkal/data
 fclean: down clean delete
-re: down clean up
+re: fclean all
