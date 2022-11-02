@@ -13,7 +13,7 @@ COPY www.conf /etc/php7/php-fpm.d/www.conf
 # copy wordpress launch script H->C
 COPY wordpress-launch.sh /tmp/wordpress-launch.sh
 
-WORKDIR /var/www/wordpress
+WORKDIR /var/www/html/wordpress
 
 # run wordpress launch script
 ENTRYPOINT ["sh", "/tmp/wordpress-launch.sh"]
