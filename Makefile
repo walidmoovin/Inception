@@ -3,7 +3,7 @@ domain:
 	@echo "Creating domain..."
 	@echo "127.0.0.1 wbekkal.42.fr" >> /etc/hosts
 up: start
-	@docker-compose -f ./srcs/docker-compose.yml up --build
+	@BUILDKIT_PROGRESS=plain docker-compose -f ./srcs/docker-compose.yml up --build
 start:
 	@echo "Creating data files...";
 	@mkdir -p /home/wbekkal/data/mysql;
