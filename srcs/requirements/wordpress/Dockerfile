@@ -8,8 +8,9 @@ RUN chmod +x wp-cli.phar
 RUN mv wp-cli.phar /usr/local/bin/wp
 
 # copy wordpress config files H->C
-# COPY www.conf /etc/php7/php-fpm.d/www.conf
-COPY www.conf /etc/php7/php-fpm.conf
+RUN mkdir -p /etc/php7/php-fpm.d/
+COPY www.conf /etc/php7/php-fpm.d/www.conf
+# COPY www.conf /etc/php7/php-fpm.conf
 
 # copy wordpress launch script H->C
 COPY wordpress-launch.sh /tmp/wordpress-launch.sh
