@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # waiting for database to be ready
-while ! mariadb -hmariadb -u$ADMIN -p$PASSWORD $DB_NAME; do
+while ! mariadb -hmariadb -u$ADMIN -p$PASSWORD $DB_NAME &> /dev/null; do
   sleep 3
 done
 
