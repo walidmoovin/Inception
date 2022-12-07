@@ -1,5 +1,5 @@
 # docker-compose.yml is the file that will allow us to set-up and run our containers with our own configuration
-version: '3.8'
+version: '3.7'
 services:
   mariadb:
     container_name: mariadb

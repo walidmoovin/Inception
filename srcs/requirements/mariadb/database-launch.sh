@@ -25,7 +25,9 @@ GRANT ALL PRIVILEGES ON $DB_NAME.* TO '$ADMIN'@'%';
 FLUSH PRIVILEGES;
 EOF
 fi
+
+# this chinese code allows to connect to the database from outside the container
 sed -i "s|skip-networking|# skip-networking|g" /etc/my.cnf.d/mariadb-server.cnf
 sed -i "s|.*bind-address\s*=.*|bind-address=0.0.0.0|g" /etc/my.cnf.d/mariadb-server.cnf
 
-mysqld --user=mysql --console
+exec mysqld --user=mysql --console
