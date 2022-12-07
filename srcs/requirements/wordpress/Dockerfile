@@ -16,5 +16,6 @@ COPY www.conf /etc/php7/php-fpm.d/www.conf
 COPY wordpress-launch.sh /tmp/wordpress-launch.sh
 
 WORKDIR /var/www/html/wordpress
+
 # run wordpress launch script
 ENTRYPOINT ["sh", "/tmp/wordpress-launch.sh"]
